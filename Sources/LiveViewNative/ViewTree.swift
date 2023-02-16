@@ -12,6 +12,8 @@ import LiveViewNativeCore
 public extension CodingUserInfoKey {
     /// The ``LiveContext`` that is present when a modifier is being decoded.
     static let liveContext = CodingUserInfoKey(rawValue: "LiveViewNative.liveContext")!
+    /// The ``ElementNode`` that a modifier is attached to.
+    static let elementNode = CodingUserInfoKey(rawValue: "LiveViewNative.elementNode")!
 }
 
 struct ViewTreeBuilder<R: CustomRegistry> {
@@ -74,7 +76,7 @@ struct ViewTreeBuilder<R: CustomRegistry> {
     fileprivate func fromElement(_ element: ElementNode, context: LiveContext<R>) -> some View {
         let view = createView(element, context: context)
         let jsonStr = element.attributeValue(for: "modifiers")
-        let modified = applyModifiers(encoded: jsonStr, to: view, context: context)
+        let modified = applyModifiers(encoded: jsonStr, to: view, element: element, context: context)
         return modified
             .environment(\.element, element)
     }
@@ -88,11 +90,12 @@ struct ViewTreeBuilder<R: CustomRegistry> {
         }
     }
     
-    private func applyModifiers(encoded: String?, to view: some View, context: LiveContext<R>) -> some View {
+    private func applyModifiers(encoded: String?, to view: some View, element: ElementNode, context: LiveContext<R>) -> some View {
         let modifiers: [ModifierContainer<R>]
         if let encoded {
             let decoder = JSONDecoder()
             decoder.userInfo[.liveContext] = context
+            decoder.userInfo[.elementNode] = element
             if let decoded = try? decoder.decode([ModifierContainer<R>].self, from: Data(encoded.utf8)) {
                 modifiers = decoded
             } else {
