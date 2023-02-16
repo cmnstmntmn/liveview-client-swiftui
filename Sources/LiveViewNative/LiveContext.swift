@@ -53,8 +53,9 @@ public struct LiveContext<R: CustomRegistry> {
     ) -> (NodeChildrenSequence.Element) -> Bool {
         { child in
             if case let .element(element) = child.data,
-               element.namespace == namespace,
-               element.tag == tagName
+               element.namespace == nil,
+               element.tag == "template",
+               element.attributes.contains(where: { $0.id.rawValue == "#\(tagName)" })
             {
                 return true
             } else {
@@ -82,7 +83,7 @@ public struct LiveContext<R: CustomRegistry> {
         if namedSlotChildren.isEmpty && includeDefaultSlot {
             let defaultSlotChildren = children.filter({
                 if case let .element(element) = $0.data {
-                    return element.namespace != namespace
+                    return element.tag != "template"
                 } else {
                     return true
                 }
