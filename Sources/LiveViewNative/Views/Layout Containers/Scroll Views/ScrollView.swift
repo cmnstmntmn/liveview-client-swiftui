@@ -11,8 +11,6 @@ struct ScrollView<R: CustomRegistry>: View {
     @ObservedElement private var element: ElementNode
     private let context: LiveContext<R>
     
-    @LiveBinding(attribute: "scroll-position") private var scrollPosition: String? = nil
-    
     init(element: ElementNode, context: LiveContext<R>) {
         self.context = context
     }
@@ -25,7 +23,7 @@ struct ScrollView<R: CustomRegistry>: View {
             ) {
                 context.buildChildren(of: element)
             }
-            .onChange(of: scrollPosition) { newValue in
+            .onChange(of: element.attributeValue(for: "scroll-position")) { newValue in
                 guard let newValue else { return }
                 proxy.scrollTo(
                     newValue,
