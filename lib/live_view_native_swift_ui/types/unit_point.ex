@@ -1,4 +1,5 @@
 defmodule LiveViewNativeSwiftUi.Types.UnitPoint do
+  @derive Jason.Encoder
   defstruct [:x, :y]
 
   use LiveViewNativePlatform.Modifier.Type

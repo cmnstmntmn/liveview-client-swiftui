@@ -75,8 +75,18 @@ struct ViewTreeBuilder<R: CustomRegistry> {
         let view = createView(element, context: context)
         let jsonStr = element.attributeValue(for: "modifiers")
         let modified = applyModifiers(encoded: jsonStr, to: view, context: context)
-        return modified
+        let withID = applyID(element: element, to: modified)
+        return withID
             .environment(\.element, element)
+    }
+    
+    @ViewBuilder
+    private func applyID(element: ElementNode, to view: some View) -> some View {
+        if let id = element.attributeValue(for: "id") {
+            view.id(id)
+        } else {
+            view
+        }
     }
     
     @ViewBuilder
