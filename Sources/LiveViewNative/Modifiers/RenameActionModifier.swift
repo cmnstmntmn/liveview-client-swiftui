@@ -25,11 +25,11 @@ struct RenameActionModifier: ViewModifier, Decodable {
     
     func body(content: Content) -> some View {
         content
-//            .renameAction {
-//                Task {
-//                    // FIXME: Pass the target once that is available.
-//                    try await coordinatorEnvironment?.pushEvent("click", event, [String:Any]())
-//                }
-//            }
+           .renameAction {
+               Task {
+                   // FIXME: Pass the target once that is available.
+                   try await coordinatorEnvironment?.pushEvent("click", event, [String:Any](), nil)
+               }
+           }
     }
 }
